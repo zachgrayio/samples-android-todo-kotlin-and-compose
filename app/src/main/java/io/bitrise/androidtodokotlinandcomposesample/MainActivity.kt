@@ -16,6 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.bitrise.androidtodokotlinandcomposesample.ui.theme.AndroidToDoKotlinAndComposeSampleTheme
 
+data class Task(val text: String, val isDone: Boolean)
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +31,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TodoApp() {
-    val tasks = remember { mutableStateListOf<String>() }
+    val tasks = remember { mutableStateListOf<Task>() }
     val newTask = remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -50,7 +52,7 @@ fun TodoApp() {
         Button(
             onClick = {
                 if (newTask.value.isNotBlank()) {
-                    tasks.add(newTask.value)
+                    tasks.add(Task(newTask.value, false))
                     newTask.value = ""
                 }
             },
@@ -61,16 +63,31 @@ fun TodoApp() {
             Text("Add Task")
         }
 
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(tasks.size) { index ->
-                TaskItem(task = tasks[index])
+        val notDoneTasks = tasks.filter { !it.isDone }
+        val doneTasks = tasks.filter { it.isDone }
+
+        Text("Not Done Yet", modifier = Modifier.padding(16.dp))
+        LazyColumn(modifier = Modifier.weight(1f)) {
+            items(notDoneTasks.size) { index ->
+                TaskItem(task = notDoneTasks[index]) { updatedTask ->
+                    tasks[index] = updatedTask
+                }
+            }
+        }
+
+        Text("Done", modifier = Modifier.padding(16.dp))
+        LazyColumn(modifier = Modifier.weight(1f)) {
+            items(doneTasks.size) { index ->
+                TaskItem(task = doneTasks[index]) { updatedTask ->
+                    tasks[index] = updatedTask
+                }
             }
         }
     }
 }
 
 @Composable
-fun TaskItem(task: String) {
+fun TaskItem(task: Task, onTaskUpdated: (Task) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -78,11 +95,13 @@ fun TaskItem(task: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
-            checked = false,
-            onCheckedChange = { /* Mark task as completed */ },
+            checked = task.isDone,
+            onCheckedChange = { isChecked ->
+                onTaskUpdated(task.copy(isDone = isChecked))
+            },
             modifier = Modifier.padding(end = 16.dp)
         )
-        Text(text = task)
+        Text(text = task.text)
     }
 }
 
