@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -68,7 +70,7 @@ fun TodoApp() {
         Text("Not Done Yet", modifier = Modifier.padding(16.dp))
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(notDoneTasks.size) { index ->
-                TaskItem(task = notDoneTasks[index]) { updatedTask ->
+                TaskItem(task = notDoneTasks[index], tasks = tasks) { updatedTask ->
                     val originalIndex = tasks.indexOf(notDoneTasks[index])
                     tasks[originalIndex] = updatedTask
                 }
@@ -78,7 +80,7 @@ fun TodoApp() {
         Text("Done", modifier = Modifier.padding(16.dp))
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(doneTasks.size) { index ->
-                TaskItem(task = doneTasks[index]) { updatedTask ->
+                TaskItem(task = doneTasks[index], tasks = tasks) { updatedTask ->
                     val originalIndex = tasks.indexOf(doneTasks[index])
                     tasks[originalIndex] = updatedTask
                 }
@@ -88,7 +90,7 @@ fun TodoApp() {
 }
 
 @Composable
-fun TaskItem(task: Task, onTaskUpdated: (Task) -> Unit) {
+fun TaskItem(task: Task, tasks: MutableList<Task>, onTaskUpdated: (Task) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,7 +102,13 @@ fun TaskItem(task: Task, onTaskUpdated: (Task) -> Unit) {
                 onTaskUpdated(task.copy(isDone = isChecked))
             }, modifier = Modifier.padding(end = 16.dp)
         )
-        Text(text = task.text)
+        Text(text = task.text, modifier = Modifier.weight(1f))
+        IconButton(onClick = { tasks.remove(task) }) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete Task"
+            )
+        }
     }
 }
 
