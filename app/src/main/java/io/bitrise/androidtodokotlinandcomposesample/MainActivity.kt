@@ -55,8 +55,7 @@ fun TodoApp() {
                     tasks.add(Task(newTask.value, false))
                     newTask.value = ""
                 }
-            },
-            modifier = Modifier
+            }, modifier = Modifier
                 .align(Alignment.End)
                 .padding(16.dp)
         ) {
@@ -70,7 +69,8 @@ fun TodoApp() {
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(notDoneTasks.size) { index ->
                 TaskItem(task = notDoneTasks[index]) { updatedTask ->
-                    tasks[index] = updatedTask
+                    val originalIndex = tasks.indexOf(notDoneTasks[index])
+                    tasks[originalIndex] = updatedTask
                 }
             }
         }
@@ -79,7 +79,8 @@ fun TodoApp() {
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(doneTasks.size) { index ->
                 TaskItem(task = doneTasks[index]) { updatedTask ->
-                    tasks[index] = updatedTask
+                    val originalIndex = tasks.indexOf(doneTasks[index])
+                    tasks[originalIndex] = updatedTask
                 }
             }
         }
@@ -95,11 +96,9 @@ fun TaskItem(task: Task, onTaskUpdated: (Task) -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
-            checked = task.isDone,
-            onCheckedChange = { isChecked ->
+            checked = task.isDone, onCheckedChange = { isChecked ->
                 onTaskUpdated(task.copy(isDone = isChecked))
-            },
-            modifier = Modifier.padding(end = 16.dp)
+            }, modifier = Modifier.padding(end = 16.dp)
         )
         Text(text = task.text)
     }
