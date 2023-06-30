@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.bitrise.androidtodokotlinandcomposesample.ui.theme.AndroidToDoKotlinAndComposeSampleTheme
@@ -68,7 +69,7 @@ fun TodoApp() {
         val doneTasks = tasks.filter { it.isDone }
 
         Text("Not Done Yet", modifier = Modifier.padding(16.dp))
-        LazyColumn(modifier = Modifier.weight(1f)) {
+        LazyColumn(modifier = Modifier.weight(1f).testTag("NotDoneYetList")) {
             items(notDoneTasks.size) { index ->
                 TaskItem(task = notDoneTasks[index], tasks = tasks) { updatedTask ->
                     val originalIndex = tasks.indexOf(notDoneTasks[index])
@@ -78,7 +79,7 @@ fun TodoApp() {
         }
 
         Text("Done", modifier = Modifier.padding(16.dp))
-        LazyColumn(modifier = Modifier.weight(1f)) {
+        LazyColumn(modifier = Modifier.weight(1f).testTag("DoneList")) {
             items(doneTasks.size) { index ->
                 TaskItem(task = doneTasks[index], tasks = tasks) { updatedTask ->
                     val originalIndex = tasks.indexOf(doneTasks[index])
@@ -94,13 +95,14 @@ fun TaskItem(task: Task, tasks: MutableList<Task>, onTaskUpdated: (Task) -> Unit
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .testTag("row-${task.text}"),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
             checked = task.isDone, onCheckedChange = { isChecked ->
                 onTaskUpdated(task.copy(isDone = isChecked))
-            }, modifier = Modifier.padding(end = 16.dp)
+            }, modifier = Modifier.padding(end = 16.dp).testTag("checkbox-${task.text}")
         )
         Text(text = task.text, modifier = Modifier.weight(1f))
         IconButton(onClick = { tasks.remove(task) }) {
