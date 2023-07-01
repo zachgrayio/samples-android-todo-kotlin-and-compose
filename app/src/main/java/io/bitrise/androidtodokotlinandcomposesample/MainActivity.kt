@@ -21,6 +21,35 @@ import io.bitrise.androidtodokotlinandcomposesample.ui.theme.AndroidToDoKotlinAn
 
 data class Task(val text: String, val isDone: Boolean)
 
+class Tasks {
+    private val tasks = mutableStateListOf<Task>()
+
+    fun addTask(task: Task) {
+        tasks.add(task)
+    }
+
+    fun updateTask(originalTask: Task, updatedTask: Task) {
+        val originalIndex = tasks.indexOf(originalTask)
+        tasks[originalIndex] = updatedTask
+    }
+
+    fun removeTask(task: Task) {
+        tasks.remove(task)
+    }
+
+    fun getNotDoneTasks(): List<Task> {
+        return tasks.filter { !it.isDone }
+    }
+
+    fun getDoneTasks(): List<Task> {
+        return tasks.filter { it.isDone }
+    }
+
+    fun getAllTasks(): List<Task> {
+        return tasks
+    }
+}
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +63,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TodoApp() {
-    val tasks = remember { mutableStateListOf<Task>() }
+    val tasks = remember { Tasks() }
     val newTask = remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -55,7 +84,7 @@ fun TodoApp() {
         Button(
             onClick = {
                 if (newTask.value.isNotBlank()) {
-                    tasks.add(Task(newTask.value, false))
+                    tasks.addTask(Task(newTask.value, false))
                     newTask.value = ""
                 }
             }, modifier = Modifier
@@ -65,15 +94,14 @@ fun TodoApp() {
             Text("Add Task")
         }
 
-        val notDoneTasks = tasks.filter { !it.isDone }
-        val doneTasks = tasks.filter { it.isDone }
+        val notDoneTasks = tasks.getNotDoneTasks()
+        val doneTasks = tasks.getDoneTasks()
 
         Text("Not Done Yet", modifier = Modifier.padding(16.dp))
         LazyColumn(modifier = Modifier.weight(1f).testTag("NotDoneYetList")) {
             items(notDoneTasks.size) { index ->
                 TaskItem(task = notDoneTasks[index], tasks = tasks) { updatedTask ->
-                    val originalIndex = tasks.indexOf(notDoneTasks[index])
-                    tasks[originalIndex] = updatedTask
+                    tasks.updateTask(notDoneTasks[index], updatedTask)
                 }
             }
         }
@@ -82,8 +110,7 @@ fun TodoApp() {
         LazyColumn(modifier = Modifier.weight(1f).testTag("DoneList")) {
             items(doneTasks.size) { index ->
                 TaskItem(task = doneTasks[index], tasks = tasks) { updatedTask ->
-                    val originalIndex = tasks.indexOf(doneTasks[index])
-                    tasks[originalIndex] = updatedTask
+                    tasks.updateTask(doneTasks[index], updatedTask)
                 }
             }
         }
@@ -91,7 +118,7 @@ fun TodoApp() {
 }
 
 @Composable
-fun TaskItem(task: Task, tasks: MutableList<Task>, onTaskUpdated: (Task) -> Unit) {
+fun TaskItem(task: Task, tasks: Tasks, onTaskUpdated: (Task) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -105,7 +132,7 @@ fun TaskItem(task: Task, tasks: MutableList<Task>, onTaskUpdated: (Task) -> Unit
             }, modifier = Modifier.padding(end = 16.dp).testTag("checkbox-${task.text}")
         )
         Text(text = task.text, modifier = Modifier.weight(1f))
-        IconButton(onClick = { tasks.remove(task) }) {
+        IconButton(onClick = { tasks.removeTask(task) }) {
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete Task"
