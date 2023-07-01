@@ -59,4 +59,29 @@ class MainActivityTest {
             hasText("Add a basic UI test to the app") and hasAnyAncestor(doneList)
         ).assertExists()
     }
+
+//    @Test
+//    fun exampleFailingTest_completingAnItem() {
+//        // Start the app
+//        composeTestRule.setContent {
+//            AndroidToDoKotlinAndComposeSampleTheme {
+//                TodoApp()
+//            }
+//        }
+//
+//        // given: we type in a new task
+//        composeTestRule.onNodeWithText("New Task")
+//            .performTextInput("Add a basic UI test to the app")
+//        // and click the "Add Task" button
+//        composeTestRule.onNode(addTaskButton).performClick()
+//        // and we click the checkbox on the item to mark it complete
+//        composeTestRule.onNode(
+//            hasTestTag("checkbox-Add a basic UI test to the app")
+//        ).performClick()
+//
+//        // then the task should be in the "Done" list
+//        composeTestRule.onNode(
+//            hasText("Add a basic UI test to the app") and hasAnyAncestor(doneList)
+//        ).assertDoesNotExist()
+//    }
 }
