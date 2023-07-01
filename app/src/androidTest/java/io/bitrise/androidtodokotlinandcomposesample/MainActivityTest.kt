@@ -36,7 +36,7 @@ class MainActivityTest {
     }
 
     @Test
-    fun competingAnItem() {
+    fun completingAnItem() {
         // Start the app
         composeTestRule.setContent {
             AndroidToDoKotlinAndComposeSampleTheme {
