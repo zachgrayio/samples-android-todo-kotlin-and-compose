@@ -62,8 +62,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TodoApp() {
-    val tasks = remember { Tasks() }
+fun TodoApp(tasks: Tasks = remember { Tasks() }) {
     val newTask = remember { mutableStateOf("") }
     val selectedTab = remember { mutableStateOf(0) }
 
@@ -149,7 +148,10 @@ fun TaskItem(task: Task, tasks: Tasks, onTaskUpdated: (Task) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
+    val tasks = Tasks()
+    tasks.addTask(Task("Task 1", false))
+    tasks.addTask(Task("Task 2", false))
     AndroidToDoKotlinAndComposeSampleTheme {
-        TodoApp()
+        TodoApp(tasks)
     }
 }
