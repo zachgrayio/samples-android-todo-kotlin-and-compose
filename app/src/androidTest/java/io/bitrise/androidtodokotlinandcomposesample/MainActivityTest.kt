@@ -11,8 +11,7 @@ class MainActivityTest {
     @get:Rule
     val composeTestRule = createComposeRule()
     val addTaskButton = hasText("Add Task") and hasClickAction()
-    val notDoneYetList = hasTestTag("NotDoneYetList")
-    val doneList = hasTestTag("DoneList")
+    val tasksList = hasTestTag("TasksList")
 
     @Test
     fun addingAnItem() {
@@ -31,9 +30,30 @@ class MainActivityTest {
 
         // then the task is added to the "Not Done Yet" list
         composeTestRule.onNode(
-            hasText("Add a basic UI test to the app") and hasAnyAncestor(notDoneYetList)
+            hasText("Add a basic UI test to the app") and hasAnyAncestor(tasksList)
         ).assertExists()
     }
+
+//    @Test
+//    fun exampleFailingTest_addingAnItem() {
+//        // Start the app
+//        composeTestRule.setContent {
+//            AndroidToDoKotlinAndComposeSampleTheme {
+//                TodoApp()
+//            }
+//        }
+//
+//        // given: we type in a new task
+//        composeTestRule.onNodeWithText("New Task")
+//            .performTextInput("Add a basic UI test to the app")
+//        // and click the "Add Task" button
+//        composeTestRule.onNode(addTaskButton).performClick()
+//
+//        // then the task is added to the "Not Done Yet" list
+//        composeTestRule.onNode(
+//            hasText("Add a basic UI test to the app") and hasAnyAncestor(tasksList)
+//        ).assertDoesNotExist()
+//    }
 
     @Test
     fun completingAnItem() {
@@ -54,34 +74,16 @@ class MainActivityTest {
             hasTestTag("checkbox-Add a basic UI test to the app")
         ).performClick()
 
-        // then the task should be in the "Done" list
+        // then the task should no longer be listed on the "Not done yet" tab
         composeTestRule.onNode(
-            hasText("Add a basic UI test to the app") and hasAnyAncestor(doneList)
+            hasText("Add a basic UI test to the app") and hasAnyAncestor(tasksList)
+        ).assertDoesNotExist()
+
+        // instead it should be on the "Done" tab
+        // switch over to the "Done" tab and check it again
+        composeTestRule.onNodeWithText("Done").performClick()
+        composeTestRule.onNode(
+            hasText("Add a basic UI test to the app") and hasAnyAncestor(tasksList)
         ).assertExists()
     }
-
-//    @Test
-//    fun exampleFailingTest_completingAnItem() {
-//        // Start the app
-//        composeTestRule.setContent {
-//            AndroidToDoKotlinAndComposeSampleTheme {
-//                TodoApp()
-//            }
-//        }
-//
-//        // given: we type in a new task
-//        composeTestRule.onNodeWithText("New Task")
-//            .performTextInput("Add a basic UI test to the app")
-//        // and click the "Add Task" button
-//        composeTestRule.onNode(addTaskButton).performClick()
-//        // and we click the checkbox on the item to mark it complete
-//        composeTestRule.onNode(
-//            hasTestTag("checkbox-Add a basic UI test to the app")
-//        ).performClick()
-//
-//        // then the task should be in the "Done" list
-//        composeTestRule.onNode(
-//            hasText("Add a basic UI test to the app") and hasAnyAncestor(doneList)
-//        ).assertDoesNotExist()
-//    }
 }

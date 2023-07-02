@@ -65,6 +65,7 @@ class MainActivity : ComponentActivity() {
 fun TodoApp() {
     val tasks = remember { Tasks() }
     val newTask = remember { mutableStateOf("") }
+    val selectedTab = remember { mutableStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Surface(
@@ -94,24 +95,28 @@ fun TodoApp() {
             Text("Add Task")
         }
 
-        val notDoneTasks = tasks.getNotDoneTasks()
-        val doneTasks = tasks.getDoneTasks()
-
-        Text("Not Done Yet", modifier = Modifier.padding(16.dp))
-        LazyColumn(modifier = Modifier.weight(1f).testTag("NotDoneYetList")) {
-            items(notDoneTasks.size) { index ->
-                TaskItem(task = notDoneTasks[index], tasks = tasks) { updatedTask ->
-                    tasks.updateTask(notDoneTasks[index], updatedTask)
-                }
+        TabRow(selectedTabIndex = selectedTab.value) {
+            Tab(selected = selectedTab.value == 0, onClick = { selectedTab.value = 0 }) {
+                Text("Not Done Yet")
+            }
+            Tab(selected = selectedTab.value == 1, onClick = { selectedTab.value = 1 }) {
+                Text("Done")
             }
         }
 
-        Text("Done", modifier = Modifier.padding(16.dp))
-        LazyColumn(modifier = Modifier.weight(1f).testTag("DoneList")) {
-            items(doneTasks.size) { index ->
-                TaskItem(task = doneTasks[index], tasks = tasks) { updatedTask ->
-                    tasks.updateTask(doneTasks[index], updatedTask)
-                }
+        when (selectedTab.value) {
+            0 -> TaskList(tasks.getNotDoneTasks(), tasks)
+            1 -> TaskList(tasks.getDoneTasks(), tasks)
+        }
+    }
+}
+
+@Composable
+fun TaskList(taskList: List<Task>, tasks: Tasks) {
+    LazyColumn(modifier = Modifier.testTag("TasksList")) {
+        items(taskList.size) { index ->
+            TaskItem(task = taskList[index], tasks = tasks) { updatedTask ->
+                tasks.updateTask(taskList[index], updatedTask)
             }
         }
     }
