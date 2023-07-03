@@ -150,7 +150,7 @@ fun TaskItem(task: Task, tasks: Tasks, onTaskUpdated: (Task) -> Unit) {
 fun DefaultPreview() {
     val tasks = Tasks()
     tasks.addTask(Task("Task 1", false))
-    tasks.addTask(Task("Task 2", false))
+    tasks.addTask(Task("Task 2", true))
     AndroidToDoKotlinAndComposeSampleTheme {
         TodoApp(tasks)
     }
