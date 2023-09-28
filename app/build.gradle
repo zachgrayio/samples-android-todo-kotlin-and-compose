@@ -3,6 +3,13 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+        vendor = JvmVendorSpec.ORACLE
+    }
+}
+
 android {
     namespace 'io.bitrise.androidtodokotlinandcomposesample'
     compileSdk 32
