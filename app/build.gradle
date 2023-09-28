@@ -10,6 +10,17 @@ java {
     }
 }
 
+normalization {
+    runtimeClasspath {
+        metaInf {
+            ignoreCompletely()
+        }
+        properties {
+            ignoreProperty 'timestamp'
+        }
+    }
+}
+
 android {
     namespace 'io.bitrise.androidtodokotlinandcomposesample'
     compileSdk 32
